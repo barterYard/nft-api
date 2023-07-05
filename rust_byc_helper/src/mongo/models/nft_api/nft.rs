@@ -27,7 +27,7 @@ impl Nft {
             )
             .await
         {
-            Ok(Some(x)) => {}
+            Ok(Some(_x)) => {}
             _ => {
                 let _ = nft_col.insert_one(self, None).await;
             }

@@ -6,7 +6,7 @@ use proc::ModelCollection;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone, ModelCollection)]
-pub struct Transfert {
+pub struct Transfer {
     pub _id: ObjectId,
     pub date: String,
     pub from: String,
@@ -14,9 +14,9 @@ pub struct Transfert {
     pub nft: ObjectId,
 }
 
-impl Transfert {
+impl Transfer {
     pub fn new(date: String, from: String, to: String, nft: ObjectId) -> Self {
-        Transfert {
+        Transfer {
             _id: ObjectId::new(),
             date,
             from,
@@ -32,14 +32,14 @@ impl Transfert {
         nft: ObjectId,
         client: &Client,
     ) -> Result<InsertOneResult, Error> {
-        let transfer = Transfert {
+        let transfer = Transfer {
             _id: ObjectId::new(),
             date,
             from,
             to,
             nft,
         };
-        Transfert::get_collection(client)
+        Transfer::get_collection(client)
             .insert_one(transfer, None)
             .await
     }
@@ -50,8 +50,8 @@ impl Transfert {
         to: String,
         nft: ObjectId,
         client: &Client,
-    ) -> Option<(Transfert, bool)> {
-        let transfer_col = Transfert::get_collection(client);
+    ) -> Option<(Transfer, bool)> {
+        let transfer_col = Transfer::get_collection(client);
 
         match transfer_col
             .find_one(
@@ -67,14 +67,14 @@ impl Transfert {
         {
             Ok(Some(c)) => Some((c, false)),
             _ => {
-                let transfer = Transfert {
+                let transfer = Transfer {
                     _id: ObjectId::new(),
                     date,
                     from,
                     to,
                     nft,
                 };
-                match Transfert::get_collection(client)
+                match Transfer::get_collection(client)
                     .insert_one(transfer.clone(), None)
                     .await
                 {
@@ -90,7 +90,7 @@ impl Transfert {
     }
 
     pub async fn save(&self, client: &Client) -> Result<InsertOneResult, Error> {
-        Transfert::get_collection(client)
+        Transfer::get_collection(client)
             .insert_one(self, None)
             .await
     }
