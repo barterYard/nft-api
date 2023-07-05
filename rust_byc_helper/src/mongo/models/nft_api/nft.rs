@@ -39,7 +39,7 @@ impl Nft {
         contract: &Contract,
         nft_id: String,
         save: bool,
-    ) -> Nft {
+    ) -> (Nft, bool) {
         let nft_col = Nft::get_collection(client);
         match nft_col
             .find_one(
@@ -48,23 +48,8 @@ impl Nft {
             )
             .await
         {
-            Ok(y) => match y {
-                Some(nft) => return nft,
-                _ => {
-                    let new_nft = Nft {
-                        contract: contract._id,
-                        contract_id: contract.id.clone(),
-                        id: nft_id,
-                        _id: bson::oid::ObjectId::new(),
-                        ..Default::default()
-                    };
-                    if save {
-                        let _ = nft_col.insert_one(&new_nft, None).await;
-                    }
-                    new_nft
-                }
-            },
-            Err(_) => {
+            Ok(Some(nft)) => return (nft, false),
+            _ => {
                 let new_nft = Nft {
                     contract: contract._id,
                     contract_id: contract.id.clone(),
@@ -75,7 +60,7 @@ impl Nft {
                 if save {
                     let _ = nft_col.insert_one(&new_nft, None).await;
                 }
-                new_nft
+                (new_nft, true)
             }
         }
     }
