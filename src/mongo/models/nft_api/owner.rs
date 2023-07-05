@@ -2,21 +2,16 @@ use std::collections::HashMap;
 
 use crate::mongo::models::{common::ModelCollection, mongo_doc};
 use bson::{oid::ObjectId, Document};
-use mongodb::{
-    error::Error,
-    results::{InsertOneResult, UpdateResult},
-    Client,
-};
+use log::info;
+use mongodb::{error::Error, results::UpdateResult, Client};
 use proc::ModelCollection;
 use serde::{Deserialize, Serialize};
-
-use super::contract;
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone, ModelCollection)]
 pub struct Owner {
     pub _id: ObjectId,
     pub address: String,
-    pub nfts: Option<HashMap<String, Vec<ObjectId>>>,
+    pub nfts: HashMap<String, Vec<ObjectId>>,
 }
 
 impl Owner {
@@ -24,33 +19,8 @@ impl Owner {
         Owner {
             _id: ObjectId::new(),
             address,
-            nfts,
+            nfts: nfts.unwrap_or_default(),
         }
-    }
-    pub async fn update(&self, client: &Client) -> Result<UpdateResult, Error> {
-        let nfts: Document = self
-            .nfts
-            .clone()
-            .unwrap()
-            .into_iter()
-            .map(|(k, x)| {
-                (
-                    k,
-                    bson::Bson::Array(x.into_iter().map(|c| bson::Bson::ObjectId(c)).collect()),
-                )
-            })
-            .collect();
-        Owner::get_collection(client)
-            .update_one(
-                mongo_doc! {
-                    "_id": self._id
-                },
-                mongo_doc! {"$set": mongo_doc! {
-                    "nfts": nfts,
-                }},
-                None,
-            )
-            .await
     }
 
     pub async fn get_or_create(client: &Client, address: String) -> Self {
@@ -93,20 +63,17 @@ impl Owner {
         contract_id: String,
         client: &Client,
     ) -> Result<UpdateResult, Error> {
-        if self.nfts.is_none() {
-            let mut nfts = HashMap::new();
-            nfts.insert(contract_id, vec![nft]);
-            self.nfts = Some(nfts)
-        } else {
-            match self.nfts.as_mut().unwrap().get_mut(&contract_id) {
-                Some(x) => x.push(nft),
-                _ => {
-                    self.nfts.as_mut().unwrap().insert(contract_id, vec![nft]);
-                    {}
-                }
-            };
-        }
-        self.update(client).await
+        let field_name = "nfts.".to_owned() + &contract_id.replace(".", "_");
+
+        Owner::get_collection(client)
+            .update_one(
+                mongo_doc! {"_id": self._id},
+                mongo_doc! {
+                    "$addToSet": {field_name: nft}
+                },
+                None,
+            )
+            .await
     }
 
     pub async fn remove_owned_nft(
@@ -115,26 +82,15 @@ impl Owner {
         nft: ObjectId,
         client: &Client,
     ) -> Result<UpdateResult, Error> {
-        if self.nfts.is_none() {
-            let mut nfts = HashMap::new();
-            nfts.insert(contract_id.clone(), vec![nft]);
-            self.nfts = Some(nfts)
-        } else {
-            match self.nfts.as_ref().unwrap().get(&contract_id) {
-                Some(_x) => {
-                    let new_nfts = self.nfts.clone().unwrap();
-                    let mut doc = new_nfts.get(&contract_id).unwrap().clone();
-
-                    doc = doc
-                        .into_iter()
-                        .filter(|x| x.to_string() != nft.to_string())
-                        .collect();
-                    self.nfts.as_mut().unwrap().insert(contract_id.clone(), doc);
-                }
-                _ => {}
-            };
-        }
-
-        self.update(client).await
+        let field_name = "nfts.".to_owned() + &contract_id.replace(".", "_");
+        Owner::get_collection(client)
+            .update_one(
+                mongo_doc! {"_id": self._id},
+                mongo_doc! {
+                    "$pull": {field_name: nft}
+                },
+                None,
+            )
+            .await
     }
 }
