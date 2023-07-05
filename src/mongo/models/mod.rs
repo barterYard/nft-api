@@ -17,4 +17,4 @@ pub use nft_api::contract::{Contract, Deployment};
 pub use nft_api::create_schema as create_nft_api_db;
 pub use nft_api::nft::Nft as GenNft;
 pub use nft_api::owner::Owner;
-pub use nft_api::transfert::Transfert;
+pub use nft_api::transfer::Transfer;

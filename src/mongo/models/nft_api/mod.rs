@@ -2,12 +2,12 @@ use std::error::Error;
 
 use mongodb::{options::IndexOptions, Client, IndexModel};
 
-use super::{common::ModelCollection, mongo_doc, Owner, Transfert};
+use super::{common::ModelCollection, mongo_doc, Owner, Transfer};
 
 pub mod contract;
 pub mod nft;
 pub mod owner;
-pub mod transfert;
+pub mod transfer;
 
 pub async fn create_schema(m_client: &Client) -> Result<(), Box<dyn Error>> {
     let nft_col = nft::Nft::get_collection(m_client);
@@ -35,7 +35,7 @@ pub async fn create_schema(m_client: &Client) -> Result<(), Box<dyn Error>> {
         )
         .await?;
 
-    let tra_col = Transfert::get_collection(m_client);
+    let tra_col = Transfer::get_collection(m_client);
     tra_col.drop(None).await?;
     tra_col
         .create_index(
