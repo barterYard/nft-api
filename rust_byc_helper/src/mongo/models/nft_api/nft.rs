@@ -9,10 +9,11 @@ use super::contract::Contract;
 #[derive(Serialize, Deserialize, Debug, Default, Clone, ModelCollection)]
 pub struct Nft {
     pub _id: ObjectId,
-    pub id: String,
+    pub id: i64,
     pub description: Option<String>,
     pub name: Option<String>,
     pub burned: bool,
+    pub owner: ObjectId,
     pub contract_id: String,
     pub contract: ObjectId,
 }
@@ -42,16 +43,13 @@ impl Nft {
     pub async fn get_or_create(
         client: &Client,
         contract: &Contract,
-        nft_id: String,
+        nft_id: i64,
         save: bool,
         session: Option<&mut ClientSession>,
     ) -> (Nft, bool) {
         let nft_col = Nft::get_collection(client);
         match nft_col
-            .find_one(
-                mongo_doc! {"contract": contract._id, "id": nft_id.clone()},
-                None,
-            )
+            .find_one(mongo_doc! {"contract": contract._id, "id": nft_id}, None)
             .await
         {
             Ok(Some(nft)) => return (nft, false),
@@ -59,7 +57,7 @@ impl Nft {
                 let new_nft = Nft {
                     contract: contract._id,
                     contract_id: contract.id.clone(),
-                    id: nft_id.clone(),
+                    id: nft_id,
                     _id: bson::oid::ObjectId::new(),
                     ..Default::default()
                 };
@@ -69,6 +67,7 @@ impl Nft {
                         _ => nft_col.insert_one(&new_nft, None).await,
                     };
                 }
+
                 (new_nft, true)
             }
         }
@@ -79,11 +78,18 @@ impl Nft {
         client: &Client,
         session: Option<&mut ClientSession>,
     ) -> Result<UpdateResult, Error> {
-        let op = mongo_doc! {"$set": mongo_doc! {
-            "burned": true,
-        }};
-        self.update(op, client, session).await
+        self.update(
+            mongo_doc! {
+                    "$set": mongo_doc! {
+                    "burned": true,
+                }
+            },
+            client,
+            session,
+        )
+        .await
     }
+
     pub async fn update(
         &self,
         update: Document,
