@@ -50,7 +50,6 @@ pub async fn get_transfers(
             .await
         {
             filters.insert("contract", contract._id);
-            println!("{:?}", contract._id);
         };
         if let Some(nft_id) = q_filters.0.nft_id {
             filters.insert("nft_id", nft_id);
