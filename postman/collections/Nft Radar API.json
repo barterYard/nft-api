@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "b8fb4ab1-6407-4aa2-b413-7222abc061e9",
+		"name": "Nft Radar API",
+		"description": "# Introduction\nThis Api references all nft minted and transfered on the flow blockchain\n\n# Overview\nThings that the developers should know about\n\n# Authentication\nWhat is the preferred way of using the API?\n\n# Error Codes\nWhat errors and status codes can a user expect?\n\n# Rate limit\nIs there a limit to the number of requests a user can send?",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "21223386-b8fb4ab1-6407-4aa2-b413-7222abc061e9"
+	},
+	"item": [
+		{
+			"name": "https://api.nftradar.dev/contracts",
+			"id": "f90ea629-d379-478a-9c3b-9e2e467a0ce3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://api.nftradar.dev/contracts?limit=10&offset=0",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nftradar",
+						"dev"
+					],
+					"path": [
+						"contracts"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "7165c4a4-ef63-4866-8cd0-6116f7a4fee7",
+					"name": "https://api.nftradar.dev/contracts",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.nftradar.dev/contracts?limit=1&offset=0",
+							"protocol": "https",
+							"host": [
+								"api",
+								"nftradar",
+								"dev"
+							],
+							"path": [
+								"contracts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 11 Jul 2023 20:31:17 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "access-control-allow-credentials",
+							"value": "true"
+						},
+						{
+							"key": "vary",
+							"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=HLT01cDL460tAoFI52FG4U%2BgrFMMoxuvdcV8VB37r9gzlGuVpwRJcLfFKnB5X%2F8lxRPZVs6jdUzQhs5iopDiDhmRbZ71FYkrC7fkQ2lobtydyR7dQI%2BAWyGK3u8eSPh8Tq%2FN\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "7e53cf271cbe047b-CDG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"_id\": {\n            \"$oid\": \"649a78bc9ef2802f11575e90\"\n        },\n        \"address\": \"0x29fcd0b5e444242a\",\n        \"id\": \"A.29fcd0b5e444242a.StakedStarlyCard\",\n        \"locked\": false,\n        \"deleted\": false,\n        \"done\": true,\n        \"identifier\": \"StakedStarlyCard\",\n        \"lastCursor\": \"NTYyNzM3OTAvMy9BLjI5ZmNkMGI1ZTQ0NDI0MmEuU3Rha2VkU3Rhcmx5Q2FyZC8yMjIx\",\n        \"deployments\": [\n            {\n                \"time\": {\n                    \"$date\": {\n                        \"$numberLong\": \"1658131284519\"\n                    }\n                }\n            },\n            {\n                \"time\": {\n                    \"$date\": {\n                        \"$numberLong\": \"1655318589013\"\n                    }\n                }\n            },\n            {\n                \"time\": {\n                    \"$date\": {\n                        \"$numberLong\": \"1653550905507\"\n                    }\n                }\n            }\n        ],\n        \"type\": \"NonFungibleToken\"\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "https://api.nftradar.dev/nfts/{{contract_id}}/{{nft_id}}",
+			"id": "2c22312b-103f-4c14-aaa2-a7a3100870fb",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://api.nftradar.dev/nfts/{{contract_id}}/{{nft_id}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nftradar",
+						"dev"
+					],
+					"path": [
+						"nfts",
+						"{{contract_id}}",
+						"{{nft_id}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "929970b8-e1fb-4ae0-a10c-a8481da1bb6a",
+					"name": "https://api.nftradar.dev/nfts/A.28abb9f291cadaf2.BarterYardClubWerewolf/1",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.nftradar.dev/nfts/A.28abb9f291cadaf2.BarterYardClubWerewolf/1",
+							"protocol": "https",
+							"host": [
+								"api",
+								"nftradar",
+								"dev"
+							],
+							"path": [
+								"nfts",
+								"A.28abb9f291cadaf2.BarterYardClubWerewolf",
+								"1"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 11 Jul 2023 19:59:35 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "access-control-allow-credentials",
+							"value": "true"
+						},
+						{
+							"key": "vary",
+							"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=rNTjqqzompfwWVEEVj2KAsW3Qvl4IAmauEG2vqfKbghXjdylq2sPVbWTMtuGb7dgeVFE2X9Rbk%2BuGB7%2Bb1v3VkV7CFld68SRJPfkfStRKNutr%2FfQgVjqqOVoCdgOpyoG9lOH\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "7e53a0b2ff72d38b-CDG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"1\",\n    \"contract\": \"A.28abb9f291cadaf2.BarterYardClubWerewolf\",\n    \"owner\": \"0xfde5bb656e7dd5de\"\n}"
+				}
+			]
+		},
+		{
+			"name": "https://api.nftradar.dev/transfers?contract={{contract_id}}&nft_id={{nft_id}}&limit=10&offset=0",
+			"id": "5c05b204-f259-444c-9002-8feb5c24ad3a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://api.nftradar.dev/transfers?contract={{contract_id}}&nft_id={{nft_id}}&from={{from_address}}&to={{to_address}}&limit=10&offset=0",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nftradar",
+						"dev"
+					],
+					"path": [
+						"transfers"
+					],
+					"query": [
+						{
+							"key": "contract",
+							"value": "{{contract_id}}"
+						},
+						{
+							"key": "nft_id",
+							"value": "{{nft_id}}"
+						},
+						{
+							"key": "from",
+							"value": "{{from_address}}"
+						},
+						{
+							"key": "to",
+							"value": "{{to_address}}"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "ea5531c5-d96a-46b3-9175-191855a2a008",
+					"name": "https://api.nftradar.dev/transfers?contract=A.28abb9f291cadaf2.BarterYardClubWerewolf&nft_id=1&limit=5&offset=0",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.nftradar.dev/transfers?contract=A.28abb9f291cadaf2.BarterYardClubWerewolf&nft_id=1&limit=10&offset=0",
+							"protocol": "https",
+							"host": [
+								"api",
+								"nftradar",
+								"dev"
+							],
+							"path": [
+								"transfers"
+							],
+							"query": [
+								{
+									"key": "contract",
+									"value": "A.28abb9f291cadaf2.BarterYardClubWerewolf"
+								},
+								{
+									"key": "nft_id",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 11 Jul 2023 20:06:10 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "access-control-allow-credentials",
+							"value": "true"
+						},
+						{
+							"key": "vary",
+							"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=erpuAPfbRIKnQXQ2ozBz4AL1seJzl7cLkZufqn%2Bf8M1am6SoglBMaGTvWn3zKLdz0Uqny8PN6AB6VlgkbpFrnYiLpdQzjAQPhRJCfbnQW32akG2ar4edex5zMJTmiMAan7ZW\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "7e53aa577c7bd38b-CDG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"_id\": {\n            \"$oid\": \"64ac18e66d41db6b236cf09f\"\n        },\n        \"date\": \"2022-03-07T23:40:16.169097Z\",\n        \"from\": \"0x0\",\n        \"to\": \"0x87041950bcae661d\",\n        \"nft\": null,\n        \"nft_id\": 1,\n        \"contract\": {\n            \"$oid\": \"649a7ab1cc6d8c0fdf9cf983\"\n        }\n    },\n    {\n        \"_id\": {\n            \"$oid\": \"64ac18e66d41db6b236cf0a4\"\n        },\n        \"date\": \"2022-03-08T14:00:52.618602Z\",\n        \"from\": \"0x0\",\n        \"to\": \"0x4a5f893166107e71\",\n        \"nft\": null,\n        \"nft_id\": 1,\n        \"contract\": {\n            \"$oid\": \"649a7ab1cc6d8c0fdf9cf983\"\n        }\n    },\n    {\n        \"_id\": {\n            \"$oid\": \"64ac198f6d41db6b236d831a\"\n        },\n        \"date\": \"2022-08-17T13:37:17.543514Z\",\n        \"from\": \"0x4a5f893166107e71\",\n        \"to\": \"0xfde5bb656e7dd5de\",\n        \"nft\": null,\n        \"nft_id\": 1,\n        \"contract\": {\n            \"$oid\": \"649a7ab1cc6d8c0fdf9cf983\"\n        }\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "https://api.nftradar.dev/health",
+			"id": "ee98a8a8-0046-40dd-b45e-eaf64aea19cd",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://api.nftradar.dev/health",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nftradar",
+						"dev"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": [
+				{
+					"id": "d10f2f8d-fa66-49ff-9099-2a7d5f166dde",
+					"name": "https://api.nftradar.dev/health",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.nftradar.dev/health",
+							"protocol": "https",
+							"host": [
+								"api",
+								"nftradar",
+								"dev"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 11 Jul 2023 20:01:06 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "access-control-allow-credentials",
+							"value": "true"
+						},
+						{
+							"key": "vary",
+							"value": "Origin, Access-Control-Request-Method, Access-Control-Request-Headers"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Report-To",
+							"value": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=kQpRuxVFQ1CyjCM0ZvM5f6psjIgR5JeiMeNfwxOFgYZBRMDRnFqsQL3NHhS93DA2F%2FyiSu08IbVDVIfSWoh7ZWiH4uByjVcKUL6kigd80vqZuuCL52r%2BkOoIz%2F1jtPqmRCYg\"}],\"group\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "NEL",
+							"value": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "CF-RAY",
+							"value": "7e53a2f02885d38b-CDG"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"infos\": {\n        \"status\": 200,\n        \"message\": \"ok\"\n    },\n    \"service_name\": \"Flow Nft API\"\n}"
+				}
+			]
+		},
+		{
+			"name": "https://api.nftradar.dev/nfts?contract={{contract_id}}",
+			"id": "3896df1c-01eb-4fbc-9e38-3e829f0b372a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://api.nftradar.dev/nfts?contract={{contract_id}}&limit=10&offset=0",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nftradar",
+						"dev"
+					],
+					"path": [
+						"nfts"
+					],
+					"query": [
+						{
+							"key": "contract",
+							"value": "{{contract_id}}"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "c61e5e8f-57ad-4b8a-aa6f-5410c93422d8",
+			"key": "contract_id",
+			"value": "A.28abb9f291cadaf2.BarterYardClubWerewolf"
+		},
+		{
+			"id": "57029cf6-9182-4d31-b571-8889d16590b0",
+			"key": "nft_id",
+			"value": "1"
+		},
+		{
+			"id": "7cbd069a-0277-4664-a9f3-29f1d6629421",
+			"key": "to_address",
+			"value": "0xfde5bb656e7dd5de"
+		},
+		{
+			"id": "c5acf1ee-1b43-47e6-b262-c0e2ddf16781",
+			"key": "from_address",
+			"value": "0x4a5f893166107e71"
+		}
+	]
+}
