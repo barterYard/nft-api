@@ -39,6 +39,22 @@ pub async fn get_transfers(
     client: Data<mongodb::Client>,
 ) -> impl Responder {
     let mut filters = Document::new();
+    if q_filters.contract.is_none()
+        && q_filters.from.is_none()
+        && q_filters.to.is_none()
+        && q_filters.nft_id.is_none()
+    {
+        return (None, http::StatusCode::UNPROCESSABLE_ENTITY);
+    }
+    if q_filters.nft_id.is_some() && q_filters.contract.is_none() {
+        return (None, http::StatusCode::UNPROCESSABLE_ENTITY);
+    }
+    if q_filters.from.is_some() {
+        filters.insert("from", q_filters.0.from.clone().unwrap());
+    }
+    if q_filters.to.is_some() {
+        filters.insert("to", q_filters.0.to.clone().unwrap());
+    }
     if q_filters.contract.is_some() {
         if let Ok(Some(contract)) = Contract::get_collection(&client)
             .find_one(
@@ -69,7 +85,7 @@ pub async fn get_transfers(
             let t2: Vec<Result<Transfer, _>> = val.collect().await;
             t2.into_iter().map(|x| x.ok().unwrap()).collect()
         }
-        Err(_) => return (None, http::StatusCode::OK),
+        Err(_) => return (None, http::StatusCode::NOT_FOUND),
     };
     (Some(Json(transfers)), http::StatusCode::OK)
 }
