@@ -4,8 +4,8 @@ use actix_web::{
     Responder,
 };
 use byc_helpers::mongo::{
-    models::{common::ModelCollection, mongo_doc, Transfer},
-    mongodb::{self, options::FindOptions},
+    models::{common::ModelCollection, mongo_doc, Contract, GenNft, Transfer},
+    mongodb::{self, bson::Document, options::FindOptions},
 };
 
 use futures::StreamExt;
@@ -24,14 +24,41 @@ impl Endpoint for Transfers {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TransferFilters {
+    contract: Option<String>,
+    nft_id: Option<i64>,
+    from: Option<String>,
+    to: Option<String>,
+}
+
 #[get("")]
 pub async fn get_transfers(
     pagination: web::Query<PaginationParams>,
+    q_filters: web::Query<TransferFilters>,
     client: Data<mongodb::Client>,
 ) -> impl Responder {
-    let contracts: Vec<Transfer> = match Transfer::get_collection(&client)
+    let mut filters = Document::new();
+    if q_filters.contract.is_some() {
+        if let Ok(Some(contract)) = Contract::get_collection(&client)
+            .find_one(
+                mongo_doc! {
+                    "id": q_filters.0.contract.unwrap()
+                },
+                None,
+            )
+            .await
+        {
+            filters.insert("contract", contract._id);
+            println!("{:?}", contract._id);
+        };
+        if let Some(nft_id) = q_filters.0.nft_id {
+            filters.insert("nft_id", nft_id);
+        }
+    }
+    let transfers: Vec<Transfer> = match Transfer::get_collection(&client)
         .find(
-            mongo_doc! {},
+            filters,
             FindOptions::builder()
                 .limit(pagination.limit())
                 .skip(pagination.offset())
@@ -45,5 +72,5 @@ pub async fn get_transfers(
         }
         Err(_) => return (None, http::StatusCode::OK),
     };
-    (Some(Json(contracts)), http::StatusCode::OK)
+    (Some(Json(transfers)), http::StatusCode::OK)
 }
