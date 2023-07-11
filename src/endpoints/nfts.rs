@@ -4,49 +4,102 @@ use actix_web::{
     Responder,
 };
 use byc_helpers::mongo::{
-    models::{common::ModelCollection, mongo_doc, GenNft, Transfer},
-    mongodb::{self, options::FindOptions},
+    models::{common::ModelCollection, mongo_doc, Contract, GenNft, Owner, Transfer},
+    mongodb::{self, bson::Document, options::FindOptions},
 };
 
+use super::{Endpoint, PaginationParams};
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
-
-use super::{Endpoint, PaginationParams};
+use serde_json::json;
 
 #[derive(Serialize, Deserialize)]
 pub struct Nfts {}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GetNftParams {
     contract: String,
-    nft_id: String,
+    nft_id: Option<i64>,
 }
 
 impl Endpoint for Nfts {
     fn services() -> actix_web::Scope {
         web::scope("/nfts")
             .service(get_nft)
+            .service(get_nfts)
             .service(get_nft_transaction)
     }
 }
 
-#[get("")]
+#[get("/{contract_id}/{nft_id}")]
 pub async fn get_nft(
-    query: web::Query<GetNftParams>,
+    params: web::Path<(String, i64)>,
+
     client: Data<mongodb::Client>,
 ) -> impl Responder {
-    let nft = match GenNft::get_collection(&client)
+    let (contract_id, nft_id) = params.to_owned();
+    let mut filters = Document::new();
+    filters.insert("id", nft_id);
+
+    if let Ok(Some(contract)) = Contract::get_collection(&client)
         .find_one(
-            mongo_doc! {"contract_id": query.contract.clone(), "id": query.nft_id.clone()},
+            mongo_doc! {
+                "id": contract_id.clone()
+            },
             None,
         )
         .await
     {
+        filters.insert("contract", contract._id);
+    };
+    let nft: GenNft = match GenNft::get_collection(&client)
+        .find_one(filters, None)
+        .await
+    {
         Ok(Some(val)) => val,
-        Ok(None) => return (None, http::StatusCode::OK),
+        _ => return (None, http::StatusCode::NOT_FOUND),
+    };
+    let owner = Owner::get_collection(&client)
+        .find_one(mongo_doc! {"_id": nft.owner}, None)
+        .await
+        .unwrap()
+        .unwrap_or_default();
+    (
+        Some(Json(
+            json!({"id": nft.id.to_string(), "contract": nft.contract_id, "owner": owner.address }),
+        )),
+        http::StatusCode::OK,
+    )
+}
+
+#[get("")]
+pub async fn get_nfts(
+    query: web::Query<GetNftParams>,
+    client: Data<mongodb::Client>,
+) -> impl Responder {
+    let mut filters = Document::new();
+    if let Some(nft_id) = query.nft_id {
+        filters.insert("id", nft_id);
+    }
+    if let Ok(Some(contract)) = Contract::get_collection(&client)
+        .find_one(
+            mongo_doc! {
+                "id": query.contract.clone()
+            },
+            None,
+        )
+        .await
+    {
+        filters.insert("contract", contract._id);
+    };
+    let nfts: Vec<GenNft> = match GenNft::get_collection(&client).find(filters, None).await {
+        Ok(val) => {
+            let t2: Vec<Result<GenNft, _>> = val.collect().await;
+            t2.into_iter().map(|x| x.ok().unwrap()).collect()
+        }
+
         Err(_) => return (None, http::StatusCode::OK),
     };
-    (Some(Json(nft)), http::StatusCode::OK)
+    (Some(Json(nfts)), http::StatusCode::OK)
 }
 
 #[get("/transfers")]
@@ -55,20 +108,9 @@ pub async fn get_nft_transaction(
     query: web::Query<GetNftParams>,
     client: Data<mongodb::Client>,
 ) -> impl Responder {
-    let nft = match GenNft::get_collection(&client)
-        .find_one(
-            mongo_doc! {"contract_id": query.contract.clone(), "id": query.nft_id.clone()},
-            None,
-        )
-        .await
-    {
-        Ok(Some(val)) => val,
-        Ok(None) => return (None, http::StatusCode::OK),
-        Err(_) => return (None, http::StatusCode::OK),
-    };
     let transferts: Vec<Transfer> = match Transfer::get_collection(&client)
         .find(
-            mongo_doc! {"nft": nft._id},
+            mongo_doc! {"nft_id": query.nft_id, "contract": query.contract.clone()},
             FindOptions::builder()
                 .limit(pagination.limit())
                 .skip(pagination.offset())

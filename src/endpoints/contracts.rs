@@ -25,7 +25,7 @@ impl Endpoint for Contracts {
 #[get("")]
 pub async fn get_contracts(client: Data<mongodb::Client>) -> impl Responder {
     let contracts: Vec<Contract> = match Contract::get_collection(&client)
-        .find(mongo_doc! {}, None)
+        .find(mongo_doc! {"done": true}, None)
         .await
     {
         Ok(val) => {
