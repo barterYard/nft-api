@@ -13,6 +13,8 @@ pub struct Contract {
     pub deleted: bool,
     pub done: bool,
     pub identifier: String,
+    #[serde(rename = "lastCursor")]
+    pub last_cursor: Option<String>,
     pub deployments: Vec<Deployment>,
     #[serde(rename = "type")]
     pub contract_type: String,

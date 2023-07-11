@@ -10,6 +10,18 @@ pub mod owner;
 pub mod transfer;
 
 pub async fn create_schema(m_client: &Client) -> Result<(), Box<dyn Error>> {
+    let contract_col = contract::Contract::get_collection(m_client);
+    match contract_col
+        .update_many(
+            mongo_doc! {"done": true},
+            mongo_doc! {"$set": {"done": false, "lastCursor": ""}},
+            None,
+        )
+        .await
+    {
+        Err(e) => println!("{:?}", e),
+        _ => {}
+    }
     let nft_col = nft::Nft::get_collection(m_client);
     nft_col.drop(None).await?;
     nft_col
@@ -30,6 +42,7 @@ pub async fn create_schema(m_client: &Client) -> Result<(), Box<dyn Error>> {
                   "id": 1,
                   "contract": 1
                 })
+                .options(IndexOptions::builder().unique(true).build())
                 .build(),
             None,
         )
@@ -42,7 +55,7 @@ pub async fn create_schema(m_client: &Client) -> Result<(), Box<dyn Error>> {
             IndexModel::builder()
                 .keys(mongo_doc! {
                     "date": 1,
-                    "nft": 1,
+                    "nft_id": 1,
                     "from": 1,
                     "to": 1
                 })
