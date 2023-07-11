@@ -33,7 +33,6 @@ impl Endpoint for Nfts {
 #[get("/{contract_id}/{nft_id}")]
 pub async fn get_nft(
     params: web::Path<(String, i64)>,
-
     client: Data<mongodb::Client>,
 ) -> impl Responder {
     let (contract_id, nft_id) = params.to_owned();
@@ -74,6 +73,7 @@ pub async fn get_nft(
 #[get("")]
 pub async fn get_nfts(
     query: web::Query<GetNftParams>,
+    pagination: web::Query<PaginationParams>,
     client: Data<mongodb::Client>,
 ) -> impl Responder {
     let mut filters = Document::new();
@@ -91,7 +91,16 @@ pub async fn get_nfts(
     {
         filters.insert("contract", contract._id);
     };
-    let nfts: Vec<GenNft> = match GenNft::get_collection(&client).find(filters, None).await {
+    let nfts: Vec<GenNft> = match GenNft::get_collection(&client)
+        .find(
+            filters,
+            FindOptions::builder()
+                .limit(pagination.limit())
+                .skip(pagination.offset())
+                .build(),
+        )
+        .await
+    {
         Ok(val) => {
             let t2: Vec<Result<GenNft, _>> = val.collect().await;
             t2.into_iter().map(|x| x.ok().unwrap()).collect()
