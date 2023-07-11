@@ -5,11 +5,13 @@ use actix_web::{
 };
 use byc_helpers::mongo::{
     models::{common::ModelCollection, mongo_doc, Contract},
-    mongodb,
+    mongodb::{self, options::FindOptions},
 };
 
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
+
+use crate::endpoints::PaginationParams;
 
 use super::Endpoint;
 
@@ -23,9 +25,18 @@ impl Endpoint for Contracts {
 }
 
 #[get("")]
-pub async fn get_contracts(client: Data<mongodb::Client>) -> impl Responder {
+pub async fn get_contracts(
+    client: Data<mongodb::Client>,
+    pagination: web::Query<PaginationParams>,
+) -> impl Responder {
     let contracts: Vec<Contract> = match Contract::get_collection(&client)
-        .find(mongo_doc! {"done": true}, None)
+        .find(
+            mongo_doc! {"done": true},
+            FindOptions::builder()
+                .limit(pagination.limit())
+                .skip(pagination.offset())
+                .build(),
+        )
         .await
     {
         Ok(val) => {
