@@ -4,11 +4,12 @@ use actix_web::{
     Responder,
 };
 use byc_helpers::mongo::{
-    models::{common::ModelCollection, mongo_doc, Owner},
+    models::{common::ModelCollection, mongo_doc, GenNft, Owner},
     mongodb::{self, options::FindOptions},
 };
 
 use futures::StreamExt;
+use log::error;
 use serde::{Deserialize, Serialize};
 
 use crate::endpoints::PaginationParams;
@@ -20,41 +21,59 @@ pub struct Owners {}
 
 impl Endpoint for Owners {
     fn services() -> actix_web::Scope {
-        web::scope("/owners").service(get_owners)
+        web::scope("/owners")
+            .service(get_owner)
+            .service(get_owner_nfts)
     }
 }
 
-#[get("")]
-pub async fn get_owners(
+#[get("/{address}")]
+pub async fn get_owner(
+    address: web::Path<String>,
+    client: Data<mongodb::Client>,
+) -> impl Responder {
+    let owner: Owner = match Owner::get_collection(&client)
+        .find_one(mongo_doc! {"address": address.to_string()}, None)
+        .await
+    {
+        Ok(Some(val)) => val,
+        _ => {
+            return (None, http::StatusCode::NOT_FOUND);
+        }
+    };
+    (Some(Json(owner)), http::StatusCode::OK)
+}
+
+#[get("/{address}/nfts")]
+pub async fn get_owner_nfts(
+    address: web::Path<String>,
     pagination: web::Query<PaginationParams>,
     client: Data<mongodb::Client>,
 ) -> impl Responder {
-    let owners: Vec<Owner> = match Owner::get_collection(&client)
+    let owner: Owner = match Owner::get_collection(&client)
+        .find_one(mongo_doc! {"address": address.to_string()}, None)
+        .await
+    {
+        Ok(Some(val)) => val,
+        _ => {
+            return (None, http::StatusCode::NOT_FOUND);
+        }
+    };
+    let nfts: Vec<GenNft> = match GenNft::get_collection(&client)
         .find(
-            mongo_doc! {},
+            mongo_doc! {"owner": owner._id},
             FindOptions::builder()
                 .limit(pagination.limit())
                 .skip(pagination.offset())
-                .allow_partial_results(true)
                 .build(),
         )
         .await
     {
         Ok(val) => {
-            let t2: Vec<Result<Owner, _>> = val.collect().await;
-            t2.into_iter()
-                .map(|x| {
-                    if x.is_err() {
-                        println!("{:?}", x.clone().err())
-                    };
-                    x.ok().unwrap()
-                })
-                .collect()
+            let t2: Vec<Result<GenNft, _>> = val.collect().await;
+            t2.into_iter().map(|x| x.ok().unwrap()).collect()
         }
-        Err(e) => {
-            println!("{:?}", e);
-            return (None, http::StatusCode::NOT_FOUND);
-        }
+        Err(_) => return (None, http::StatusCode::NOT_FOUND),
     };
-    (Some(Json(owners)), http::StatusCode::OK)
+    (Some(Json(nfts)), http::StatusCode::OK)
 }
