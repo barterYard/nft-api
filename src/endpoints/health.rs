@@ -1,7 +1,18 @@
-use byc_helpers::web_server::{JsonResponse, Response};
+use byc_helpers::{
+    mongo::{
+        models::{common::ModelCollection, Contract, GenNft, Owner, Transfer},
+        mongodb,
+    },
+    web_server::{JsonResponse, Response},
+};
 
-use actix_web::{get, http, web, Responder};
+use actix_web::{
+    get, http,
+    web::{self, Data, Json},
+    Responder,
+};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 
 use super::Endpoint;
 
@@ -22,16 +33,33 @@ impl Response for Health {
     }
 }
 #[get("")]
-pub async fn get_health() -> impl Responder {
+pub async fn get_health(client: Data<mongodb::Client>) -> impl Responder {
+    let owners = Owner::get_collection(&client)
+        .estimated_document_count(None)
+        .await
+        .unwrap_or_default();
+    let transfers = Transfer::get_collection(&client)
+        .estimated_document_count(None)
+        .await
+        .unwrap_or_default();
+    let nfts = GenNft::get_collection(&client)
+        .estimated_document_count(None)
+        .await
+        .unwrap_or_default();
+    let contracts = Contract::get_collection(&client)
+        .estimated_document_count(None)
+        .await
+        .unwrap_or_default();
     (
-        Health {
-            infos: JsonResponse {
-                status: 200,
-                message: "ok",
+        Json(json!({
+            "stats": {
+                "owners": owners,
+                "transfers": transfers,
+                "nfts": nfts,
+                "contracts": contracts
             },
-            service_name: "Flow Nft API",
-        }
-        .to_response(),
+            "service_name": "NFT Api"
+        })),
         http::StatusCode::OK,
     )
 }
