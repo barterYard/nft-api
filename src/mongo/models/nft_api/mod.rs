@@ -9,6 +9,26 @@ pub mod nft;
 pub mod owner;
 pub mod transfer;
 
+pub async fn create_index(m_client: &Client) -> Result<(), Box<dyn Error>> {
+    let tra_col = Transfer::get_collection(m_client);
+    tra_col
+        .create_index(
+            IndexModel::builder()
+                .keys(mongo_doc! {
+                    "date": 1,
+                    "nft_id": 1,
+                    "from": 1,
+                    "to": 1,
+                    "contract": 1
+                })
+                .options(IndexOptions::builder().unique(true).build())
+                .build(),
+            None,
+        )
+        .await?;
+    Ok(())
+}
+
 pub async fn create_schema(m_client: &Client) -> Result<(), Box<dyn Error>> {
     let contract_col = contract::Contract::get_collection(m_client);
     match contract_col
