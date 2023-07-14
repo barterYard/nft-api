@@ -4,13 +4,48 @@ pub mod nfts;
 pub mod owners;
 pub mod transfers;
 
+use std::{env, time::Duration};
+
 use actix_identity::Identity;
 
+use actix_limitation::Limiter;
+use actix_session::SessionExt;
+use actix_web::{dev::ServiceRequest, web::Data};
 pub use health::Health;
 use serde::{Deserialize, Serialize};
 
 pub trait Endpoint {
     fn services() -> actix_web::Scope;
+
+    fn default_session_id(req: &ServiceRequest) -> Option<String> {
+        let s_id = req
+            .connection_info()
+            .realip_remote_addr()
+            .unwrap_or("unknown")
+            .to_string();
+
+        Some(
+            req.get_session()
+                .get(&s_id)
+                .unwrap()
+                .unwrap_or(Some(s_id))
+                .unwrap()
+                + &req.match_pattern().unwrap_or_default(),
+        )
+    }
+
+    fn limitation() -> Data<Limiter> {
+        let redis_url = env::var("REDIS_URL").expect("redis url (REDIS_URL) not set");
+        //redis://127.0.0.1:6379
+        Data::new(
+            Limiter::builder(redis_url)
+                .key_by(|req: &ServiceRequest| Self::default_session_id(req))
+                .limit(10)
+                .period(Duration::from_secs(60)) // 60 minutes
+                .build()
+                .unwrap(),
+        )
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

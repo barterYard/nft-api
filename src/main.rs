@@ -1,9 +1,14 @@
 pub mod endpoints;
-use actix_session::{storage::RedisSessionStore, SessionMiddleware};
+use std::{env, time::Duration};
+
+use actix_limitation::{Limiter, RateLimiter};
+use actix_session::{storage::RedisSessionStore, SessionExt, SessionMiddleware};
 use actix_web::{
     cookie::{Key, SameSite},
-    dev::Service,
-    http, web, App, HttpServer,
+    dev::{Service, ServiceRequest},
+    http,
+    web::{self, Data},
+    App, HttpServer,
 };
 use byc_helpers::{
     logger::init_logger,
@@ -21,30 +26,28 @@ use crate::endpoints::{
 async fn main() -> std::result::Result<(), std::io::Error> {
     init_logger();
     info!("server starting");
-    // let secret_key = Key::generate();
-    // let redis = RedisSessionStore::new("redis://127.0.0.1:6379")
-    //     .await
-    //     .unwrap();
+    let redis_url = env::var("REDIS_URL").expect("redis url (REDIS_URL) not set"); //redis://127.0.0.1:6379
+    let default_limiter = Data::new(
+        Limiter::builder(redis_url)
+            .key_by(|req: &ServiceRequest| Health::default_session_id(req))
+            .limit(1000)
+            .period(Duration::from_secs(60)) // 60 minutes
+            .build()
+            .unwrap(),
+    );
+
     // let domain = "localhost";
     let allowed_origin = "http://localhost:3000";
     let mongo_client = mongo::client::create().await;
     HttpServer::new(move || {
         App::new()
+            .wrap(RateLimiter::default())
+            .app_data(default_limiter.clone())
             .app_data(web::Data::new(mongo_client.clone()))
             .wrap(get_default_logger_middleware())
-            // .wrap(
-            //     SessionMiddleware::builder(redis.clone(), secret_key.clone())
-            //         .cookie_domain(Some(domain.to_string()))
-            //         .cookie_same_site(SameSite::Strict)
-            //         .cookie_http_only(false)
-            //         .build(),
-            // )
             .wrap(
                 get_default_cors_middelware()
                     .allowed_origin(allowed_origin)
-                    .allowed_origin_fn(|origin, _req_head| {
-                        origin.as_bytes().ends_with(b".barteryard.club")
-                    })
                     .allowed_headers(vec![http::header::AUTHORIZATION, http::header::ACCEPT])
                     .allowed_header(http::header::CONTENT_TYPE)
                     .supports_credentials(),
