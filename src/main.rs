@@ -66,7 +66,7 @@ async fn main() -> std::result::Result<(), std::io::Error> {
                 }
                 Some("unknown".to_string())
             })
-            .limit(10)
+            .limit(100)
             .period(Duration::from_secs(3600)) // 1 hour
             .build()
             .unwrap(),
