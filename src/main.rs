@@ -36,16 +36,13 @@ async fn main() -> std::result::Result<(), std::io::Error> {
     info!("server starting");
     let secret_key = Key::generate();
     let redis_url = env::var("REDIS_URL").expect("redis url (REDIS_URL) not set"); //redis://127.0.0.1:6379
+
     let default_limiter = Data::new(
         Limiter::builder(redis_url.clone())
             .key_by(|req: &ServiceRequest| {
-                let s_id = web::Query::<LoginParams>::from_query(req.query_string())
-                    .unwrap()
-                    .0;
                 let session = req.get_session();
-                if let Some(token) = s_id.token {
-                    if let Some(token) = session.get::<String>("auth").unwrap() {}
 
+                if let Some(token) = session.get::<String>("auth").unwrap() {
                     return Some(
                         req.get_session()
                             .get(&token)
@@ -71,6 +68,7 @@ async fn main() -> std::result::Result<(), std::io::Error> {
             .build()
             .unwrap(),
     );
+
     let redis = RedisSessionStore::new(redis_url).await.unwrap();
 
     // let domain = "localhost";
