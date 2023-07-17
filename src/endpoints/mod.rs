@@ -2,6 +2,7 @@ pub mod contracts;
 pub mod health;
 pub mod nfts;
 pub mod owners;
+pub mod token;
 pub mod transfers;
 
 use std::{env, time::Duration};

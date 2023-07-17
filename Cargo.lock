@@ -378,6 +378,7 @@ dependencies = [
  "byc_helpers",
  "futures",
  "log",
+ "rand",
  "serde",
  "serde_json",
 ]
