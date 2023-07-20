@@ -39,15 +39,16 @@ pub async fn get_transfers(
     client: Data<mongodb::Client>,
 ) -> impl Responder {
     let mut filters = Document::new();
-    if q_filters.contract.is_none()
-        && q_filters.from.is_none()
-        && q_filters.to.is_none()
-        && q_filters.nft_id.is_none()
+
+    if (q_filters.contract.is_none() || q_filters.contract.as_ref().unwrap() == "")
+        && (q_filters.from.is_none() || q_filters.from.as_ref().unwrap() == "")
+        && (q_filters.to.is_none() || q_filters.to.as_ref().unwrap() == "")
+        && (q_filters.nft_id.is_none())
     {
         return (None, http::StatusCode::UNPROCESSABLE_ENTITY);
     }
     if q_filters.nft_id.is_some() && q_filters.contract.is_none() {
-        return (None, http::StatusCode::UNPROCESSABLE_ENTITY);
+        return (None, http::StatusCode::NOT_ACCEPTABLE);
     }
     if q_filters.from.is_some() {
         filters.insert("from", q_filters.0.from.clone().unwrap());
