@@ -4,7 +4,7 @@ use actix_web::{
     Responder,
 };
 use byc_helpers::mongo::{
-    models::{common::ModelCollection, mongo_doc, Contract, GenNft, Transfer},
+    models::{common::ModelCollection, mongo_doc, Contract, Transfer},
     mongodb::{self, bson::Document, options::FindOptions},
 };
 
@@ -45,7 +45,7 @@ pub async fn get_transfers(
         && (q_filters.to.is_none() || q_filters.to.as_ref().unwrap() == "")
         && (q_filters.nft_id.is_none())
     {
-        return (None, http::StatusCode::UNPROCESSABLE_ENTITY);
+        return (None, http::StatusCode::NOT_ACCEPTABLE);
     }
     if q_filters.nft_id.is_some() && q_filters.contract.is_none() {
         return (None, http::StatusCode::NOT_ACCEPTABLE);
