@@ -10,7 +10,7 @@ for filename in ./*; do
       has_gql=true;
     fi
 done
-
+echo $has_gql;
 echo "
 # builder
 FROM rust:latest as builder
@@ -19,7 +19,7 @@ WORKDIR /app
 COPY ./rust_byc_helper/proc ./rust_byc_helper/proc
 COPY ./rust_byc_helper/src ./rust_byc_helper/src
 COPY ./rust_byc_helper/Cargo.toml ./rust_byc_helper/Cargo.toml
-$(if [ has_gql ];
+$(if $has_gql
 then
 echo $gql;
 fi)
@@ -30,7 +30,7 @@ RUN cargo build -r -q
 # runner
 FROM debian:11.7-slim
 COPY --from=builder /app/target/release/$r .
-$(if [ has_gql ];
+$(if $has_gql
 then
 echo "
 # needed for gql
