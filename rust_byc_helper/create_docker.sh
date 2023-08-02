@@ -10,7 +10,7 @@ for filename in ./*; do
       has_gql=true;
     fi
 done
-echo $has_gql;
+
 echo "
 # builder
 FROM rust:latest as builder
