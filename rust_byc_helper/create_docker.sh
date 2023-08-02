@@ -1,6 +1,5 @@
 #! /bin/sh
 
-touch dockerfile_test
 r=$(basename $(pwd))
 gql="COPY ./gql/src ./gql/src\nCOPY ./gql/Cargo.toml ./gql/Cargo.toml"
 has_gql=false
