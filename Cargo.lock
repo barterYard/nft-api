@@ -102,7 +102,7 @@ dependencies = [
  "derive_more",
  "log",
  "redis",
- "time 0.3.24",
+ "time 0.3.25",
 ]
 
 [[package]]
@@ -233,7 +233,7 @@ dependencies = [
  "serde_urlencoded",
  "smallvec",
  "socket2 0.4.9",
- "time 0.3.24",
+ "time 0.3.25",
  "url",
 ]
 
@@ -511,7 +511,7 @@ dependencies = [
  "serde",
  "serde_bytes",
  "serde_json",
- "time 0.3.24",
+ "time 0.3.25",
  "uuid",
 ]
 
@@ -611,7 +611,7 @@ dependencies = [
  "rand",
  "sha2",
  "subtle",
- "time 0.3.24",
+ "time 0.3.25",
  "version_check",
 ]
 
@@ -702,9 +702,9 @@ checksum = "c2e66c9d817f1720209181c316d28635c050fa304f9c79e47a520882661b7308"
 
 [[package]]
 name = "deranged"
-version = "0.3.6"
+version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8810e7e2cf385b1e9b50d68264908ec367ba642c96d02edfe61c39e88e2a3c01"
+checksum = "7684a49fb1af197853ef7b2ee694bc1f5b4179556f1e5710e1760c5db6f5e929"
 
 [[package]]
 name = "derivative"
@@ -815,7 +815,7 @@ dependencies = [
 [[package]]
 name = "flow_helpers"
 version = "0.1.0"
-source = "git+https://github.com/barterYard/rust_flow_helper?branch=main#69463df518e1ca794ea48e6e40712ab388f0dae2"
+source = "git+https://github.com/barterYard/rust_flow_helper?branch=main#1abd968b8b0ce3dcf8edeec3909b25739154237c"
 dependencies = [
  "actix-cors",
  "actix-web",
@@ -1514,7 +1514,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "proc"
 version = "0.1.0"
-source = "git+https://github.com/barterYard/rust_flow_helper?branch=main#69463df518e1ca794ea48e6e40712ab388f0dae2"
+source = "git+https://github.com/barterYard/rust_flow_helper?branch=main#1abd968b8b0ce3dcf8edeec3909b25739154237c"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2032,9 +2032,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.24"
+version = "0.3.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b79eabcd964882a646b3584543ccabeae7869e9ac32a46f6f22b7a5bd405308b"
+checksum = "b0fdd63d58b18d663fbdf70e049f00a22c8e42be082203be7f26589213cd75ea"
 dependencies = [
  "deranged",
  "itoa",
