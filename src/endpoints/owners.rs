@@ -9,7 +9,6 @@ use flow_helpers::mongo::{
 };
 
 use futures::StreamExt;
-use log::error;
 use serde::{Deserialize, Serialize};
 
 use crate::endpoints::PaginationParams;
