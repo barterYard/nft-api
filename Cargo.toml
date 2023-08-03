@@ -8,8 +8,13 @@ edition = "2021"
 [dependencies]
 actix-web = "4.3.1"
 actix-identity = "0.5.2"
-actix-session = {version="0.7.2", features=["redis-rs-session"]}
-byc_helpers = {path="rust_byc_helper", features=["mongo", "logger", "web_server"]}
+actix-session = { version = "0.7.2", features = ["redis-rs-session"] }
+
+flow_helpers = { git = "https://github.com/barterYard/rust_flow_helper", branch = "main", features = [
+  "mongo",
+  "logger",
+  "web_server",
+] }
 log = "0.4.19"
 serde = "1.0.166"
 futures = "0.3.28"

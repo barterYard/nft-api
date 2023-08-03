@@ -375,7 +375,7 @@ dependencies = [
  "actix-limitation",
  "actix-session",
  "actix-web",
- "byc_helpers",
+ "flow_helpers",
  "futures",
  "log",
  "rand",
@@ -520,24 +520,6 @@ name = "bumpalo"
 version = "3.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a3e2c3daef883ecc1b5d58c15adae93470a91d425f3532ba1695849656af3fc1"
-
-[[package]]
-name = "byc_helpers"
-version = "0.1.0"
-dependencies = [
- "actix-cors",
- "actix-web",
- "async-trait",
- "bson",
- "chrono",
- "env_logger",
- "futures",
- "log",
- "mongodb",
- "proc",
- "serde",
- "serde_json",
-]
 
 [[package]]
 name = "bytes"
@@ -828,6 +810,25 @@ checksum = "3b9429470923de8e8cbd4d2dc513535400b4b3fef0319fb5c4e1f520a7bef743"
 dependencies = [
  "crc32fast",
  "miniz_oxide",
+]
+
+[[package]]
+name = "flow_helpers"
+version = "0.1.0"
+source = "git+https://github.com/barterYard/rust_flow_helper?branch=main#69463df518e1ca794ea48e6e40712ab388f0dae2"
+dependencies = [
+ "actix-cors",
+ "actix-web",
+ "async-trait",
+ "bson",
+ "chrono",
+ "env_logger",
+ "futures",
+ "log",
+ "mongodb",
+ "proc",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -1513,6 +1514,7 @@ checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
 [[package]]
 name = "proc"
 version = "0.1.0"
+source = "git+https://github.com/barterYard/rust_flow_helper?branch=main#69463df518e1ca794ea48e6e40712ab388f0dae2"
 dependencies = [
  "proc-macro2",
  "quote",
