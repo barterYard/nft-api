@@ -5,7 +5,7 @@ use actix_web::{
     web::{self, Json},
     HttpMessage, HttpRequest, Responder,
 };
-use rand::{distributions::Alphanumeric, random, Rng};
+use rand::{distributions::Alphanumeric, Rng};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 

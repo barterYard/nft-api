@@ -37,7 +37,6 @@ pub trait Endpoint {
 
     fn limitation() -> Data<Limiter> {
         let redis_url = env::var("REDIS_URL").expect("redis url (REDIS_URL) not set");
-        //redis://127.0.0.1:6379
         Data::new(
             Limiter::builder(redis_url)
                 .key_by(|req: &ServiceRequest| Self::default_session_id(req))
@@ -71,6 +70,8 @@ impl PaginationParams {
 pub struct IdentityID {
     #[allow(dead_code)]
     address: String,
+
+    #[allow(dead_code)]
     id: String,
 }
 trait IdentityTrait {
